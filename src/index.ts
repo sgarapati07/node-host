@@ -12,6 +12,8 @@ import { getTinyliciousContainer } from '@fluidframework/get-tinylicious-contain
 import { ContainerRuntimeFactoryWithDefaultDataStore } from "@fluidframework/aqueduct";
 import { v4 as uuid } from "uuid";
 import { getDefaultObjectFromContainer } from '@fluidframework/aqueduct';
+import { MfsDataObject, } from "@taoscap/mfs-client";
+
 
 
 
@@ -42,8 +44,8 @@ export class Note extends DataObject {
          if (text) {
              
              const note =  {
-                 text: "text of notes",
-                 id : "1"
+                 text: "text in notes",
+                 id : "id"
              };
              if(this.notesMap)
              this.notesMap.set(note.id, note);
@@ -52,8 +54,8 @@ export class Note extends DataObject {
  }
  
 export const NotesInstantiationFactory = new DataObjectFactory(
-    "Note",
-    Note,
+    "MfsDataObject",
+    MfsDataObject,
     [
         SharedMap.getFactory(),
     ],
@@ -66,21 +68,18 @@ export const NotesContainerFactory = new ContainerRuntimeFactoryWithDefaultDataS
   );
 
 
-
-
 export async function start(): Promise<void> {
     try{
         const documentId = uuid();
     const createNew = true;
     console.log(documentId)
-const container = await getTinyliciousContainer(documentId, NotesContainerFactory, createNew);
-console.log("after con" + container.id)
+    const container = await getTinyliciousContainer(documentId, NotesContainerFactory, createNew);
+    console.log("Container ID: " + container.id)
 
 // Get the Default Object from the Container
-const defaultObject = await getDefaultObjectFromContainer<Note>(container);
-console.log(defaultObject.notesMap?.get("1"))
-if(defaultObject.notesMap)
-console.log( "XXXXXXXXXXXXXXXXXXXXXXX" + defaultObject.notesMap.get("id").text);
+    const defaultObject = await getDefaultObjectFromContainer<Note>(container);
+    if(defaultObject.notesMap)
+        console.log( "The note id is " +  defaultObject.notesMap.get("id").id + " and note text is "  + defaultObject.notesMap.get("id").text);
     } catch{
 
     }
